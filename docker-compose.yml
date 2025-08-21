@@ -1,0 +1,32 @@
+services:
+  dev-postgresql:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    networks:
+      - dev-network
+    restart: unless-stopped
+
+  dev-pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DISABLE_POSTFIX: "true"
+    ports:
+      - "5050:80"
+    networks:
+      - dev-network
+    restart: unless-stopped
+    tmpfs:
+      - /var/lib/pgadmin
+    depends_on:
+      - dev-postgresql
+
+networks:
+  dev-network:
+    driver: bridge
